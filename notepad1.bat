@@ -1,6 +1,6 @@
 <# : launcher
 @ECHO OFF
-start "" powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command "Get-Content -Path \"%~f0\" -Encoding UTF8 -Raw | Invoke-Expression"
+start "" powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command "$raw = Get-Content -Path \"%~f0\" -Encoding UTF8 -Raw;$com = $raw.Replace(\"#argumentData#\", \"%1\");Invoke-Expression \"$com\";"
 EXIT /B %errorlevel%
 : end launcher #>
 
@@ -8,6 +8,7 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 $currentFile = $null
+$argumentData = "#argumentData#"
 
 # Form
 $form = New-Object System.Windows.Forms.Form
@@ -127,6 +128,15 @@ function Save-CurrentFile {
     Update-Title
 }
 
+function Open-ArgumentData {
+    if (($argumentData -ne "") -and (Test-Path $argumentData)) {
+        $textBox.Text = Get-Content $argumentData -Raw -Encoding UTF8
+        $script:currentFile = $argumentData
+        $statusLabel.Text = "Opened : $currentFile"
+        Update-Title
+    }
+}
+
 # New
 $newMenu.Add_Click({
     $textBox.Clear()
@@ -140,7 +150,7 @@ $openMenu.Add_Click({
     $openDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
 
     if ($openDialog.ShowDialog() -eq "OK") {
-        $textBox.Text = Get-Content $openDialog.FileName -Raw
+        $textBox.Text = Get-Content $openDialog.FileName -Raw -Encoding UTF8
         $script:currentFile = $openDialog.FileName
         $statusLabel.Text = "Opened : $currentFile"
         Update-Title
@@ -209,5 +219,6 @@ $textBox.Add_TextChanged({
 })
 
 Update-Title
+Open-ArgumentData
 
 [void]$form.ShowDialog()
