@@ -1,0 +1,8 @@
+title: Notepad1
+description: Classic Notepad-style Windows Text Editor written in PowerShell script
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-slate
+
+gems:
+  - jekyll-mentions

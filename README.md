@@ -1,4 +1,4 @@
-# notepad1
+# Notepad1
 Classic Notepad-style Windows Text Editor written in PowerShell script
 
 ![notepad1](screenshot.png)
