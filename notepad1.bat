@@ -210,7 +210,7 @@ $fontMenu.Add_Click({
 
 # About
 $aboutMenu.Add_Click({
-    [System.Windows.Forms.MessageBox]::Show('Notepad1 v0.0.1 '+"`r`n"+'Copyright (c) 2026 Nuzulul Zulkarnain','About')
+    [System.Windows.Forms.MessageBox]::Show('Notepad1 v0.0.1 '+"`r`n"+'Copyright (c) 2026 Nuzulul Zulkarnain'+"`r`n"+'https://nuzulul.github.io/notepad1/'+"`r`n"+'MIT License','About')
 })
 
 # Update Status Bar
