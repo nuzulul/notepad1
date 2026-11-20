@@ -134,6 +134,11 @@ function Open-ArgumentData {
         $script:currentFile = $argumentData
         $statusLabel.Text = "Opened : $currentFile"
         Update-Title
+    } else {
+        $textBox.Text = $argumentData
+        $script:currentFile = $null
+        $statusLabel.Text = "Ready"
+        Update-Title    
     }
 }
 
