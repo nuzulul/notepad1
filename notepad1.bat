@@ -129,7 +129,7 @@ function Save-CurrentFile {
 }
 
 function Open-ArgumentData {
-    if (($argumentData -ne "") -and (Test-Path $argumentData)) {
+    if (($argumentData -ne "") -and (Test-Path $argumentData -PathType Leaf)) {
         $textBox.Text = Get-Content $argumentData -Raw -Encoding UTF8
         $script:currentFile = $argumentData
         $statusLabel.Text = "Opened : $currentFile"
@@ -216,6 +216,46 @@ $aboutMenu.Add_Click({
 # Update Status Bar
 $textBox.Add_TextChanged({
     $statusLabel.Text = "Characters: $($textBox.Text.Length)"
+})
+
+# Drag and Drop
+$form.AllowDrop = $true
+$form.Add_DragEnter({
+    param($s, $e)
+
+    if ($e.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop) -or
+        $e.Data.GetDataPresent([Windows.Forms.DataFormats]::Text)) {
+        $e.Effect = [System.Windows.Forms.DragDropEffects]::Copy
+    } else {
+        $e.Effect = [System.Windows.Forms.DragDropEffects]::None
+    }
+})
+$form.Add_DragDrop({
+    param($s,$e)
+
+    $dto = $e.Data   # IDataObject
+
+    if ($dto.GetDataPresent('FileDrop')){
+        $items = $dto.GetData('FileDrop')
+    } elseif ($dto.GetDataPresent('Text')) {
+        $items = $dto.GetData('Text')
+    } else {
+        return
+    }
+    foreach ($item in $items) {
+        if (Test-Path $item -PathType Leaf) {
+            $textBox.Text = Get-Content $item -Raw -Encoding UTF8
+            $script:currentFile = $item
+            $statusLabel.Text = "Opened : $currentFile"
+            Update-Title
+        } else {
+            $textBox.Text = $item
+            $script:currentFile = $null
+            $statusLabel.Text = "Ready"
+            Update-Title        
+        }
+    }
+
 })
 
 Update-Title
